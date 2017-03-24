@@ -19,7 +19,7 @@ public class BcmF {
 	private ArrayList<BcmFEntry> mData;
     
     public BcmF(){
-        System.out.println( "Construct BCMF!" );
+        System.out.println( "<BCM Form utililty>" );
 		mData = new ArrayList<BcmFEntry>();
     }
     

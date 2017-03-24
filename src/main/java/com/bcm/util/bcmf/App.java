@@ -1,13 +1,25 @@
 package com.bcm.util.bcmf;
 
-/**
- * Hello world!
- *
- */
+import java.util.Properties;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 public class App{
     public static void main( String[] args ){
         BcmF bcmf = new BcmF();
-		bcmf.load("sample.xlsx");
+        Properties prop = new Properties();
+        String excelAddress = "";
+        try {
+            prop.load(new FileInputStream("etc/bcmf.conf"));
+            excelAddress = prop.getProperty("target_excel");
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+		// bcmf.load("sample.xlsx");
+		bcmf.load(excelAddress);
+        
 		if (args.length >0){
             if ( args[0].compareTo("-sum") == 0 ){
                 if( args.length > 1){
@@ -23,5 +35,6 @@ public class App{
 		}else{
             bcmf.showUser();                            //bcmf
         }
+        
     }
 }
