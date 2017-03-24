@@ -10,14 +10,18 @@ public class App{
 		bcmf.load("sample.xlsx");
 		if (args.length >0){
             if ( args[0].compareTo("-sum") == 0 ){
-                bcmf.summary();
+                if( args.length > 1){
+                    bcmf.summary(args[1]);              //bcmf -sum 22/03/2016
+                }else{
+                    bcmf.summary();                     //bcmf -sum
+                }
             }else if( args[0].compareTo("-help") == 0 ){
-                bcmf.help();
+                bcmf.help();                            //bcmf -help
             }else{
-                bcmf.showUser(args[0]);
+                bcmf.showUser(args[0]);                 //bcmf B999
             }
 		}else{
-            bcmf.showUser();
+            bcmf.showUser();                            //bcmf
         }
     }
 }

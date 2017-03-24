@@ -10,6 +10,10 @@ import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.lang.Integer;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 public class BcmF {
     
 	private ArrayList<BcmFEntry> mData;
@@ -61,11 +65,26 @@ public class BcmF {
 	}
     
     public void help(){
-        System.out.println("SYNOPSIS: bcmf [-sum] [-help] [user_id]");
+        System.out.println("SYNOPSIS: bcmf [-sum|[DD/MM/YYYY]] [-help] [user_id]");
     }
     
-    public void summary(){
-        System.out.println("summary");
+    public void summary(){ 
+        DateTime today = new DateTime();
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("dd/MM/yyyy");
+        String todayString = fmt.print(today);
+		for (BcmFEntry entry : mData){
+			if ( entry.getDate().compareTo(todayString) == 0 ){
+				System.out.println(entry);
+			}
+		}
+    }
+    
+    public void summary(String date){ 
+		for (BcmFEntry entry : mData){
+			if ( entry.getDate().compareTo(date) == 0 ){
+				System.out.println(entry);
+			}
+		}
     }
     
     private void printHeader(){
