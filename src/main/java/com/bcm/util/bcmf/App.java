@@ -11,7 +11,7 @@ public class App{
         Properties prop = new Properties();
         String excelAddress = "";
         try {
-            prop.load(new FileInputStream("etc/bcmf.conf"));
+            prop.load(new FileInputStream("C:/Users/BI77/Documents/bin/etc/bcmf.conf"));
             excelAddress = prop.getProperty("target_excel");
         }catch (IOException e){
             e.printStackTrace();
