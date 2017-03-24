@@ -9,10 +9,15 @@ public class App{
         BcmF bcmf = new BcmF();
 		bcmf.load("sample.xlsx");
 		if (args.length >0){
-			bcmf.showUser(args[0]);
-		}else {
-			bcmf.showUser(10);
-			
-		}
+            if ( args[0].compareTo("-sum") == 0 ){
+                bcmf.summary();
+            }else if( args[0].compareTo("-help") == 0 ){
+                bcmf.help();
+            }else{
+                bcmf.showUser(args[0]);
+            }
+		}else{
+            bcmf.showUser();
+        }
     }
 }

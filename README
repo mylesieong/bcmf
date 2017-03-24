@@ -1,0 +1,25 @@
+NAME
+       bcmf - user access form management utility for bcm
+
+SYNOPSIS
+       bcmf [-sum] [-help] [user_id]
+
+DESCRIPTION
+       The forms are killing me...
+
+OPTIONS
+       -sum
+       Present the day's all forms(C/M/U/D/MB)
+       
+       -help
+       Show this file
+
+EXAMPLES
+       bcmf B999
+       Present user B999 history, descending.
+       
+       bcmf -sum 
+       Present the day's all forms(C/M/U/D/MB)
+
+
+**

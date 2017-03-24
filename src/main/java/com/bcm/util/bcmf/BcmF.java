@@ -11,31 +11,16 @@ import java.io.FileInputStream;
 import java.lang.Integer;
 
 public class BcmF {
+    
 	private ArrayList<BcmFEntry> mData;
+    
     public BcmF(){
         System.out.println( "Construct BCMF!" );
 		mData = new ArrayList<BcmFEntry>();
     }
+    
 	public void load(String filePath){
 		try{
-			// Workbook workbook = WorkbookFactory.create(new FileInputStream(filePath));
-            // Sheet sheet = workbook.getSheetAt(0);
-			// for (Row row : sheet) {
-				// BcmFEntry entry = new BcmFEntry();
-				// try{
-					// Iterator<Cell> itr = row.cellIterator();
-                    // itr.next();
-					// entry.setUaa(itr.next().toString() + "-" + itr.next().toString());
-					// entry.setUser(itr.next().toString());
-					// entry.setDate(itr.next().toString());
-					// entry.setAction(itr.next().toString());
-					// entry.setDepartment(itr.next().toString());
-					// entry.setToDate(itr.next().toString());
-				// }catch(Exception ex){
-					// ex.printStackTrace();
-				// }
-				// this.mData.add(entry);
-			// }
             Workbook workbook = WorkbookFactory.create(new FileInputStream(filePath));
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
@@ -60,25 +45,32 @@ public class BcmF {
 	}
     
 	public void showUser(){
+        this.printHeader();
 		for (BcmFEntry entry : mData){
 			System.out.println(entry);
 		}
-
 	}
     
-	public void showUser(int n){
-        for (int i = 0; i < n ; i++){
-			System.out.println(mData.get(i));
-		}
-    }
-    
 	public void showUser(String userName){
+        this.printHeader();
 		for (BcmFEntry entry : mData){
 			if (entry.getUser().compareTo(userName)==0){
 				System.out.println(entry);
 			}
 		}
 	}
+    
+    public void help(){
+        System.out.println("SYNOPSIS: bcmf [-sum] [-help] [user_id]");
+    }
+    
+    public void summary(){
+        System.out.println("summary");
+    }
+    
+    private void printHeader(){
+        System.out.println(this.mData.get(0));
+    }
 	
 	public class BcmFEntry {
         
