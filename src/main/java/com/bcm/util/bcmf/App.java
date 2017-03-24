@@ -11,7 +11,7 @@ public class App{
 		if (args.length >0){
 			bcmf.showUser(args[0]);
 		}else {
-			bcmf.showUser();
+			bcmf.showUser(10);
 			
 		}
     }
