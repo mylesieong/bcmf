@@ -30,7 +30,7 @@ public class App{
                     bcmf.help();                            //bcmf -help
                 }
                 
-                if (args[0].substring(0,1).compareTo("-") != 0){
+                if (args[0].substring(0,0).compareTo("-") != 0){
                     bcmf.showUser(args[0]);                 //bcmf B999
                 }
                 

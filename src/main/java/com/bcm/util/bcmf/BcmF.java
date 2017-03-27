@@ -16,8 +16,8 @@ import org.joda.time.format.DateTimeFormatter;
 
 public class BcmF {
     
-    public final static int ASCENDING = 0;
-    public final static int DESCENDING = 1;
+    public final static int ASCENDING = 1;
+    public final static int DESCENDING = -1;
     
 	private ArrayList<BcmFEntry> mData;
     
@@ -78,7 +78,7 @@ public class BcmF {
 			if (entry.getUser().compareTo(userName)==0){
 				int i = 0;
                 while( i < result.size() ){
-                    if(entry.getDate().compareTo(result.get(i).getDate()) == order){
+                    if(compareDate(entry.getDate(), result.get(i).getDate()) == order){
                         i++;
                     }else{
                         break;
@@ -94,6 +94,26 @@ public class BcmF {
 		}
         
 	}
+    
+    private int compareDate(String dateA, String dateB){
+        int result = 0;
+        
+        int dayA = Integer.parseInt(dateA.substring(0,2));
+        int monthA = Integer.parseInt(dateA.substring(3,5));
+        int yearA = Integer.parseInt(dateA.substring(6));
+        int dateANum = yearA * 10000 + monthA * 100 + dayA;
+        
+        int dayB = Integer.parseInt(dateB.substring(0,2));
+        int monthB = Integer.parseInt(dateB.substring(3,5));
+        int yearB = Integer.parseInt(dateB.substring(6));
+        int dateBNum = yearB * 10000 + monthB * 100 + dayB;
+
+        if (dateANum > dateBNum) result = 1;
+        if (dateANum == dateBNum) result = 0;
+        if (dateANum < dateBNum) result = -1;
+        
+        return result;
+    }
     
     
     public void help(){
