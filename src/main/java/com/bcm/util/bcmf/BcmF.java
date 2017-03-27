@@ -16,6 +16,9 @@ import org.joda.time.format.DateTimeFormatter;
 
 public class BcmF {
     
+    public final static int ASCENDING = 0;
+    public final static int DESCENDING = 1;
+    
 	private ArrayList<BcmFEntry> mData;
     
     public BcmF(){
@@ -63,6 +66,35 @@ public class BcmF {
 			}
 		}
 	}
+    
+    public void showUser(String userName, int order){
+        System.out.println("Ordering by:" + order);
+        this.printHeader();
+        
+        LinkedList<BcmFEntry> result = new LinkedList<BcmFEntry>();
+        
+        /* Selection record from mData and insert to result list */ 
+		for (BcmFEntry entry : mData){
+			if (entry.getUser().compareTo(userName)==0){
+				int i = 0;
+                while( i < result.size() ){
+                    if(entry.getDate().compareTo(result.get(i).getDate()) == order){
+                        i++;
+                    }else{
+                        break;
+                    }
+                }
+                result.add(i, entry);
+			}
+		}
+        
+        /* Print result list */
+        for (BcmFEntry entry : result){
+            System.out.println(entry);
+		}
+        
+	}
+    
     
     public void help(){
         System.out.println("SYNOPSIS: bcmf [-sum|[DD/MM/YYYY]] [-help] [user_id]");
