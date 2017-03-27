@@ -167,11 +167,11 @@ public class BcmF {
 		public void setToDate(String todate){this.mToDate = todate;}
         
 		public String toString(){
-			return  this.mUaa+"\t"
-                    +this.mUser+"\t"
-                    +this.mDate+"\t"
-                    +this.mAction+"\t"
-                    +this.mDepartment+"\t"
+			return  this.mUaa+"  "
+                    +this.mUser+"  "
+                    +this.mDate+"  "
+                    +this.mAction+"  "
+                    +this.mDepartment+"  "
                     +this.mToDate;
 		}
 	}
