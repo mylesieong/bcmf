@@ -167,12 +167,19 @@ public class BcmF {
 		public void setToDate(String todate){this.mToDate = todate;}
         
 		public String toString(){
-			return  this.mUaa+"  "
-                    +this.mUser+"  "
-                    +this.mDate+"  "
-                    +this.mAction+"  "
-                    +this.mDepartment+"  "
-                    +this.mToDate;
+		    String uaa = this.mUaa;
+		    String user = this.mUser.length()>4?this.mUser.substring(0,4)+"...":this.mUser + "   ";
+		    String date = this.mDate;
+		    String toDate = this.mToDate.isEmpty()?"          ":this.mToDate;
+		    String action = this.mAction;
+		    String department = this.mDepartment.length()>15?this.mDepartment.substring(0,15)+"...":this.mDepartment;
+		    return uaa + " " + user + " " + date + " " + toDate + " " + action + "\t" + department;
+			//return  this.mUaa+" "
+                    //+this.mUser+" "
+                    //+this.mDate+" "
+                    //+this.mToDate+" "
+                    //+this.mAction+" "
+                    //+this.mDepartment;
 		}
 	}
 }
