@@ -10,11 +10,14 @@ public class App{
         BcmF bcmf = new BcmF();
         Properties prop = new Properties();
         String excelAddress = "";
+        String backupPath = "";
         try {
             // prop.load(new FileInputStream("C:/Users/BI77/Documents/bin/etc/bcmf.conf"));
             prop.load(new FileInputStream("etc/bcmf.conf"));
             excelAddress = prop.getProperty("target_excel");
+            backupPath = prop.getProperty("backup");
             bcmf.load(excelAddress);
+            bcmf.setBackupPath(backupPath);
                         
             if (args.length == 0){
                 
@@ -28,6 +31,10 @@ public class App{
                 
                 if (args[0].compareTo("-help") == 0){
                     bcmf.help();                            //bcmf -help
+                }
+                
+                if (args[0].compareTo("-bk") == 0){
+                    bcmf.backup();                            //bcmf -bk
                 }
                 
                 if (args[0].substring(0,0).compareTo("-") != 0){
