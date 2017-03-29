@@ -75,7 +75,32 @@ public class BcmF {
             System.out.println("Backup failed.");
         }
     }
-    
+
+    public void showDate(String dateString){
+        /* Iterate mData and find output inserted into 2 arrays */
+        ArrayList<BcmFEntry> fromDateHitResult = new ArrayList<BcmFEntry>();
+        ArrayList<BcmFEntry> toDateHitResult = new ArrayList<BcmFEntry>();
+        for (BcmFEntry entry : mData){
+            if ( entry.getDate().compareTo(dateString) == 0){
+                fromDateHitResult.add(entry);
+            }
+            if ( entry.getToDate().compareTo(dateString) == 0){
+                toDateHitResult.add(entry);
+            }
+
+        }
+
+        /* Output 2 result array */
+        System.out.println("-----Date matches from Date-----");
+        for (BcmFEntry entry : fromDateHitResult){
+            System.out.println(entry);
+        }
+        System.out.println("-----Date Matches to Date-----");
+        for (BcmFEntry entry : toDateHitResult){ 
+            System.out.println(entry);
+        }
+    }
+
     public void showUser(){
         this.printHeader();
         if (this.mData.isEmpty()){

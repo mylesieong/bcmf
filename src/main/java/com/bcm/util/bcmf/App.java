@@ -43,8 +43,8 @@ public class App{
                 
             }else if (args.length == 2){
                 
-                if (args[0].compareTo("-sum") == 0){
-                    bcmf.summary(args[1]);                      //bcmf -sum 22/03/2016
+                if (args[0].compareTo("-date") == 0){
+                    bcmf.showDate(args[1]);                      //bcmf -date 22/03/2016
                 }
                 
                 if (args[0].compareTo("-l") == 0){
