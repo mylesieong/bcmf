@@ -122,13 +122,46 @@ public class BcmF {
     
     public void summary(){ 
         DateTime today = new DateTime();
+        DateTime tomorrow = today.plusDays(1);
         DateTimeFormatter fmt = DateTimeFormat.forPattern("dd/MM/yyyy");
         String todayString = fmt.print(today);
-		for (BcmFEntry entry : mData){
-			if ( entry.getDate().compareTo(todayString) == 0 ){
-				System.out.println(entry);
-			}
+        String tomorrowString = fmt.print(tomorrow);
+	/* Iterate mData and find output inserted into 3 arrays */
+	ArrayList<BcmFEntry> todayCMUD = new ArrayList<BcmFEntry>();
+	ArrayList<BcmFEntry> tomorrowMB = new ArrayList<BcmFEntry>();
+	ArrayList<BcmFEntry> todayMB = new ArrayList<BcmFEntry>();
+	for (BcmFEntry entry : mData){
+		if ( entry.getDate().compareTo(todayString) == 0 
+			&& (entry.getAction().compareTo("C") == 0 
+			|| entry.getAction().compareTo("M") == 0
+			|| entry.getAction().compareTo("U") == 0
+			|| entry.getAction().compareTo("D") == 0 )){
+			todayCMUD.add(entry);
 		}
+		if ( entry.getDate().compareTo(tomorrowString) == 0
+			&& entry.getAction().compareTo("MB") == 0 ){
+			tomorrowMB.add(entry);
+		}
+		if ( entry.getToDate().compareTo(todayString) == 0
+			&& entry.getAction().compareTo("MB") == 0 ){
+			todayMB.add(entry);
+		}
+
+	}
+
+	/* Output 3 result array */
+	System.out.println("-----Today C/M/U/D Forms-----");
+	for (BcmFEntry entry : todayCMUD){
+		System.out.println(entry);
+	}
+	System.out.println("-----Tomorrow Start MB Forms-----");
+	for (BcmFEntry entry : tomorrowMB){ 
+		System.out.println(entry);
+	}
+	System.out.println("-----Today End MB Forms-----");
+	for (BcmFEntry entry : todayMB){
+		System.out.println(entry);
+	}
     }
     
     public void summary(String date){ 
