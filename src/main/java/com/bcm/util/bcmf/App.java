@@ -12,8 +12,8 @@ public class App{
         String excelAddress = "";
         String backupPath = "";
         try {
-            // prop.load(new FileInputStream("C:/Users/BI77/Documents/bin/etc/bcmf.conf"));
-            prop.load(new FileInputStream("etc/bcmf.conf"));
+            // prop.load(new FileInputStream("C:/Users/BI77/Documents/bin/etc/bcmf.conf"));  //production
+            prop.load(new FileInputStream("etc/bcmf.conf"));    //testing 
             excelAddress = prop.getProperty("target_excel");
             backupPath = prop.getProperty("backup");
             bcmf.load(excelAddress);
@@ -37,7 +37,7 @@ public class App{
                     bcmf.backup();                            //bcmf -bk
                 }
                 
-                if (args[0].substring(0,0).compareTo("-") != 0){
+                if (args[0].substring(0,1).compareTo("-") != 0){
                     bcmf.showUser(args[0]);                 //bcmf B999
                 }
                 
