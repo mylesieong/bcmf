@@ -18,7 +18,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.bcm.app.core.FileManipulator;
+import com.bcm.app.core.FileBackuper;
 
 public class BcmF {
     
@@ -63,9 +63,13 @@ public class BcmF {
     }
 
     public void setBackupPath(String path){
-        this.mBackuper.setBackupPath(path);
+        this.mBackuper.setPath(path);
     }
     
+    public void add(){
+        //TODO
+    }
+
     public void backup(){
         this.mBackuper.setFile(new File(this.mExcelAddress));
         this.mBackuper.manipulate();
@@ -101,49 +105,40 @@ public class BcmF {
         }
     }
 
-    public void showUser(){
-        this.printHeader();
-        if (this.mData.isEmpty()){
-            System.out.println("--nothin--");
-        }else{
-            for (BcmFEntry entry : mData){
-                System.out.println(entry);
-            }
-        }
+    public void show(){
+        show(null, BcmF.ASCENDING);
     }
     
-    public void showUser(String userName){
-        this.printHeader();
-        boolean findEntry = false;
-        for (BcmFEntry entry : mData){
-            if (entry.getUser().compareTo(userName)==0){
-                findEntry = true;
-                System.out.println(entry);
-            }
-        }
-        if (!findEntry){
-            System.out.println("---nothing---");
-        }
+    public void show(String userName){
+        show(userName, BcmF.ASCENDING); 
     }
     
-    public void showUser(String userName, int order){
-        System.out.println("Ordering by:" + order);
+    public void show(String userName, int order){
+
         this.printHeader();
-        
         LinkedList<BcmFEntry> result = new LinkedList<BcmFEntry>();
         
         /* Selection record from mData and insert to result list */ 
-        for (BcmFEntry entry : mData){
-            if (entry.getUser().compareTo(userName)==0){
-                int i = 0;
-                while( i < result.size() ){
-                    if(compareDate(entry.getDate(), result.get(i).getDate()) == order){
-                        i++;
-                    }else{
-                        break;
+        if (userName == null){
+
+            for (BcmFEntry entry : mData){
+                result.add(entry);
+            }
+
+        }else{
+
+            for (BcmFEntry entry : mData){
+                if (entry.getUser().compareTo(userName)==0){
+                    int i = 0;
+                    while( i < result.size() ){
+                        if(compareDate(entry.getDate(), result.get(i).getDate()) == order){
+                            i++;
+                        }else{
+                            break;
+                        }
                     }
+                    result.add(i, entry);
                 }
-                result.add(i, entry);
             }
         }
         
@@ -269,68 +264,7 @@ public class BcmF {
             String action = this.mAction;
             String department = this.mDepartment.length()>15?this.mDepartment.substring(0,15)+"...":this.mDepartment;
             return uaa + " " + user + " " + date + " " + toDate + " " + action + "\t" + department;
-            //return  this.mUaa+" "
-                    //+this.mUser+" "
-                    //+this.mDate+" "
-                    //+this.mToDate+" "
-                    //+this.mAction+" "
-                    //+this.mDepartment;
         }
     }
 
-    /**
-     * Inner Class: backup utility enforcement class
-     */
-    public class FileBackuper implements FileManipulator{
-     
-        private String mBackupPath;
-	private File mFile;
-	private boolean mIsSuccess;
-
-	public void setBackupPath(String path){
-	    this.mBackupPath = path;
-	}
-
-	@Override
-	public void setFile(File f){
-            this.mFile = f;
-	    this.mIsSuccess = false;
-	}
-
-	@Override 
-	public File getFile(){
-	    return this.mFile;
-	}
-
-        @Override
-	public void manipulate(){
-        try{
-            if (this.mFile != null && this.mFile.exists()){
-                /* get current date and time*/
-                DateTime datetime = new DateTime();
-                DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMddHHmmss");
-                
-                String fileName = FilenameUtils.getBaseName(this.getFile().toString());
-                String fileExtension = FilenameUtils.getExtension(this.getFile().toString());
-                
-                File backupFile = new File(this.mBackupPath + "\\" + fileName + datetime.toString(fmt) + "." + fileExtension);
-                backupFile.createNewFile();
-                
-                FileUtils.copyFile(this.getFile(), backupFile);
-                this.mIsSuccess = true;
-
-            }else{
-                this.mIsSuccess = false;
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-	}
-
-        @Override
-	public boolean isSuccess(){
-	    return this.mIsSuccess;
-	}
-
-    }
 }

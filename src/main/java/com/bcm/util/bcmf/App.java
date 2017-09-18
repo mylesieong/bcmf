@@ -1,71 +1,75 @@
 package com.bcm.util.bcmf;
 
 import java.util.Properties;
-import java.io.FileInputStream;
-import java.io.IOException;
+
+import java.io.File;
 import java.io.InputStream;
+import java.io.FileInputStream;
 
 public class App{
+
     public static void main( String[] args ){
-        BcmF bcmf = new BcmF();
+
         Properties prop = new Properties();
-        String excelAddress = "";
-        String backupPath = "";
+        InputStream is = null;
+
         try {
-            // prop.load(new FileInputStream("C:/Users/BI77/Documents/bin/etc/bcmf.conf"));  //production
-            prop.load(new FileInputStream("etc/bcmf.conf"));    //testing 
-            excelAddress = prop.getProperty("target_excel");
-            backupPath = prop.getProperty("backup");
-            bcmf.load(excelAddress);
-            bcmf.setBackupPath(backupPath);
+
+            String base = System.getenv("BCMF");
+            String conf = base + File.separator + "bcmf.conf";
+
+            prop.load(new FileInputStream(conf)); 
+            String target = prop.getProperty("target_excel");
+            String backup = prop.getProperty("backup");
+
+            BcmF bcmf = new BcmF();
+            bcmf.load(target);
+            bcmf.setBackupPath(backup);
                         
             if (args.length == 0){
                 
-                bcmf.showUser();                            //bcmf
+                bcmf.show();                            //bcmf
                 
             }else if (args.length == 1){
                 
-                if (args[0].compareTo("-sum") == 0){
-                    bcmf.summary();                         //bcmf -sum
+                if (args[0].compareTo("-a") == 0){
+                    bcmf.add();                         //bcmf -a
                 }
                 
-                if (args[0].compareTo("-help") == 0){
-                    bcmf.help();                            //bcmf -help
+                if (args[0].compareTo("-s") == 0){
+                    bcmf.summary();                         //bcmf -s
                 }
                 
-                if (args[0].compareTo("-bk") == 0){
-                    bcmf.backup();                            //bcmf -bk
+                if (args[0].compareTo("-h") == 0){
+                    bcmf.help();                            //bcmf -h
+                }
+                
+                if (args[0].compareTo("-b") == 0){
+                    bcmf.backup();                            //bcmf -b
                 }
                 
                 if (args[0].substring(0,1).compareTo("-") != 0){
-                    bcmf.showUser(args[0]);                 //bcmf B999
-                }
-                
-            }else if (args.length == 2){
-                
-                if (args[0].compareTo("-date") == 0){
-                    bcmf.showDate(args[1]);                      //bcmf -date 22/03/2016
-                }
-                
-                if (args[0].compareTo("-l") == 0){
-                    bcmf.showUser(args[1]);                     //bcmf -l B999
-                }
-
-                if (args[0].compareTo("-la") == 0){
-                    bcmf.showUser(args[1], BcmF.ASCENDING);     //bcmf -la B999
-                }
-                
-                if (args[0].compareTo("-ld") == 0){
-                    bcmf.showUser(args[1], BcmF.DESCENDING);    //bcmf -ld B999
+                    bcmf.show(args[0]);                 //bcmf B999
                 }
                 
             }else{
                 System.out.println("Args format wrong.");
             }
         
-        }catch (IOException e){
+        }catch (Exception e){
+
             e.printStackTrace();
             System.out.println("Cannot load properties or excel file.");
+
+        }finally {
+
+            if (is != null){
+                try{ is.close(); }
+                catch(Exception ee){ ee.printStackTrace(); }
+            }
+
         }
+
     }
+
 }
