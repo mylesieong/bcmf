@@ -3,16 +3,10 @@ package com.bcm.util.bcmf;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.hssf.util.CellReference;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
+import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 
 import java.util.*;
-import java.lang.Integer;
-import java.lang.Exception;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-import java.io.File;
+import java.io.*;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -27,6 +21,7 @@ public class BcmF {
     
     private ArrayList<BcmFEntry> mData;
     private String mExcelAddress;
+    private Workbook mWorkbook;
     private FileBackuper mBackuper;
     
     public BcmF(){
@@ -36,16 +31,22 @@ public class BcmF {
     }
     
     public void setExcel(String filePath){
+
         this.mExcelAddress = filePath;
         this.mBackuper.setFile(new File(filePath));
+
+        InputStream is = null;
+
         try{
-            Workbook workbook = WorkbookFactory.create(new FileInputStream(filePath));
-            Sheet sheet = workbook.getSheetAt(0);
+
+            is = new FileInputStream(filePath);
+            this.mWorkbook = WorkbookFactory.create(is);
+            Sheet sheet = mWorkbook.getSheetAt(0);
             for (Row row : sheet) {
                 if ( row.getCell(3).toString().isEmpty()){
                     break;
                 }else{
-                       if ( row.getCell(3).toString().compareTo("User ID") != 0 ){
+                    if ( row.getCell(3).toString().compareTo("User ID") != 0 ){
                         BcmFEntry entry = new BcmFEntry();
                         entry.setUaa(row.getCell(1).toString() + "-" + row.getCell(2).toString());
                         entry.setUser(row.getCell(3).toString());
@@ -53,14 +54,25 @@ public class BcmF {
                         entry.setAction(row.getCell(5).toString());
                         entry.setDepartment(row.getCell(6).toString());
                         entry.setToDate(row.getCell(7) == null?"":row.getCell(7).toString());
+                        entry.setToDepartment(row.getCell(9) == null?"":row.getCell(9).toString());
                         this.mData.add(entry);
                     }
                 }
             }
 
-        }catch (Exception ex){
-            ex.printStackTrace();
+        }catch (Exception e){
+
+            e.printStackTrace();
+
+        }finally{
+
+            if (is != null){
+                try {is.close();}
+                catch (Exception ee){ee.printStackTrace();}
+            }
+
         }
+
     }
 
     public void setBackupPath(String path){
@@ -68,7 +80,138 @@ public class BcmF {
     }
     
     public void add(){
-        //TODO
+
+        String user = "";
+        String action = "";
+        String department ="";
+        String date = "";
+        String toDate = "";
+        String toDepartment ="";
+
+        Scanner s = null;
+        OutputStream os = null;
+
+        try{
+
+            s = new Scanner(System.in);
+            os = new FileOutputStream(this.mExcelAddress);
+
+            // Read user id
+            System.out.print("Please input user id: ");
+            user = s.next();
+
+            // Read action category
+            System.out.print("Action category(C/M/U/D/MB): ");
+            action = s.next();
+
+            // Read detail base on category selection
+            if (action.compareToIgnoreCase("MB") == 0){
+
+                System.out.println("Select from department from below options: ");
+                department = selectDepartment(s, user);
+                System.out.println("Select to department from below options: ");
+                toDepartment = selectDepartment(s, user);
+                System.out.print("From date (dd/mm/yyyy): ");
+                date = s.next();
+                System.out.print("To date (dd/mm/yyyy): ");
+                toDate = s.next();
+
+            }else{
+
+                System.out.println("Select user department from below options: ");
+                department = selectDepartment(s, user);
+                System.out.print("Date (dd/mm/yyyy): ");
+                date = s.next();
+
+            }
+
+            // Write to excel 
+            Sheet sheet = mWorkbook.getSheetAt(0);
+            for (Row row : sheet) {
+                if ( row.getCell(3).toString().isEmpty()){
+
+                    Cell cell = row.getCell(3);
+                    if (cell == null)  row.createCell(3);
+                    row.getCell(3).setCellValue(user);
+
+                    cell = row.getCell(4);
+                    if (cell == null)  row.createCell(4);
+                    row.getCell(4).setCellValue(date);
+
+                    cell = row.getCell(5);
+                    if (cell == null)  row.createCell(5);
+                    row.getCell(5).setCellValue(action);
+
+                    cell = row.getCell(6);
+                    if (cell == null)  row.createCell(6);
+                    row.getCell(6).setCellValue(department);
+
+                    cell = row.getCell(7);
+                    if (cell == null)  row.createCell(7);
+                    row.getCell(7).setCellValue(toDate);
+
+                    cell = row.getCell(9);
+                    if (cell == null)  row.createCell(9);
+                    row.getCell(9).setCellValue(toDepartment);
+
+                    break;
+
+                }
+            }
+            XSSFFormulaEvaluator.evaluateAllFormulaCells(this.mWorkbook);
+            this.mWorkbook.write(os); 
+        
+        }catch(Exception e){
+
+            e.printStackTrace();
+
+        }finally{
+
+            if (os != null){
+                try {os.close();}
+                catch (Exception ee){ee.printStackTrace();}
+            }
+
+        }
+
+    }
+
+    private String selectDepartment(Scanner s, String user){
+        // Collect possibilities from mData
+        Set<String> p = new HashSet<String>();
+        for (BcmFEntry e: mData){
+            if (e.getUser().compareToIgnoreCase(user) == 0){
+                p.add(e.getDepartment());
+                p.add(e.getToDepartment());
+            }
+        }
+
+        // List possibilities
+        List<String> lp = new ArrayList<String>();
+        for (String str: p){
+            if (str.compareTo("") != 0){
+                lp.add(str);
+            }
+        }
+
+        System.out.println("0: <User Input>");
+        for (int i = 0; i < lp.size(); i++){
+            String id = Integer.toString(i + 1);
+            System.out.println(id + ": " + lp.get(i));
+        }
+
+        // Read user's input
+        while (true) {
+            int i = s.nextInt();
+            if ( i > lp.size() || i < 0 ){
+                System.out.println("Not valid options. Input again: ");
+            }else if(i == 0){
+                return s.next();
+            }else{
+                return lp.get(i-1);
+           }
+        }
+        
     }
 
     public void backup(){
@@ -217,6 +360,7 @@ public class BcmF {
         private String mAction;
         private String mDepartment;
         private String mToDate;
+        private String mToDepartment;
         
         public String getUaa() {return this.mUaa;}
         public String getUser() {return this.mUser;}
@@ -224,6 +368,7 @@ public class BcmF {
         public String getAction() {return this.mAction;}
         public String getDepartment() {return this.mDepartment;}
         public String getToDate() {return this.mToDate;}
+        public String getToDepartment() {return this.mToDepartment;}
         
         public void setUaa(String uaa){this.mUaa = uaa;}
         public void setUser(String user){this.mUser = user;}
@@ -231,6 +376,7 @@ public class BcmF {
         public void setAction(String action){this.mAction = action;}
         public void setDepartment(String department){this.mDepartment = department;}
         public void setToDate(String todate){this.mToDate = todate;}
+        public void setToDepartment(String toDepartment){this.mToDepartment = toDepartment;}
         
         public String toString(){
             String uaa = this.mUaa;
@@ -239,7 +385,9 @@ public class BcmF {
             String toDate = this.mToDate.isEmpty()?"          ":this.mToDate;
             String action = this.mAction;
             String department = this.mDepartment.length()>15?this.mDepartment.substring(0,15)+"...":this.mDepartment;
-            return uaa + " " + user + " " + date + " " + toDate + " " + action + "\t" + department;
+            String toDepartment = this.mToDepartment.length()>15?this.mToDepartment.substring(0,15)+"...":this.mToDepartment;
+            return uaa + " " + user + " " + date + " " + toDate + " " + action 
+                + "\t" + department + " " + toDepartment;
         }
     }
 
