@@ -2,32 +2,23 @@ NAME
        bcmf - user access form management utility for bcm
 
 SYNOPSIS
-       bcmf [-sum [date]] [-help] [-l/-la/-ld [user_id]] [user_id]
+       bcmf [ -a | -s | -b | -h | user_id ]
 
 DESCRIPTION
-       The forms are killing me...
+       The user application form viewer and modifier.
 
 OPTIONS
-       -sum [date]
-       Present the day's all forms(C/M/U/D/MB), date format is DD/MM/YYYY
-       
-       -help
-       Show this file
-       
-       -l [user_id]
-       List all users or specific user 
-       
-       -la [user_id]
-       List all users or specific user by ascending order
-       
-       -ld [user_id]
-       List all users or specific user by descending order
+       -s       Present the day's all forms(C/M/U/D/MB), date format is DD/MM/YYYY
+       -h       Show this file
+       -b       Backup the excel file to a specified location
+       -a       Launch a wizard for new entry adding
+       user_id  Show the users' all application sorted by UAA number
        
 EXAMPLES
        bcmf B999
-       Present user B999 history, descending.
+       Present user B999 history, sort by descending UAA number.
        
-       bcmf -sum 
+       bcmf -s
        Present the day's all forms(C/M/U/D/MB)
 
 **
