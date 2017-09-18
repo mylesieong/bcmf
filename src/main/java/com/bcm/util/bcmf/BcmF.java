@@ -35,8 +35,9 @@ public class BcmF {
         this.mBackuper = new FileBackuper();
     }
     
-    public void load(String filePath){
+    public void setExcel(String filePath){
         this.mExcelAddress = filePath;
+        this.mBackuper.setFile(new File(filePath));
         try{
             Workbook workbook = WorkbookFactory.create(new FileInputStream(filePath));
             Sheet sheet = workbook.getSheetAt(0);
@@ -71,37 +72,11 @@ public class BcmF {
     }
 
     public void backup(){
-        this.mBackuper.setFile(new File(this.mExcelAddress));
         this.mBackuper.manipulate();
         if (this.mBackuper.isSuccess()){
             System.out.println("Backup performed.");
         }else{
             System.out.println("Backup failed.");
-        }
-    }
-
-    public void showDate(String dateString){
-        /* Iterate mData and find output inserted into 2 arrays */
-        ArrayList<BcmFEntry> fromDateHitResult = new ArrayList<BcmFEntry>();
-        ArrayList<BcmFEntry> toDateHitResult = new ArrayList<BcmFEntry>();
-        for (BcmFEntry entry : mData){
-            if ( entry.getDate().compareTo(dateString) == 0){
-                fromDateHitResult.add(entry);
-            }
-            if ( entry.getToDate().compareTo(dateString) == 0){
-                toDateHitResult.add(entry);
-            }
-
-        }
-
-        /* Output 2 result array */
-        System.out.println("-----Date matches from Date-----");
-        for (BcmFEntry entry : fromDateHitResult){
-            System.out.println(entry);
-        }
-        System.out.println("-----Date Matches to Date-----");
-        for (BcmFEntry entry : toDateHitResult){ 
-            System.out.println(entry);
         }
     }
 
@@ -169,60 +144,61 @@ public class BcmF {
         return result;
     }
     
-    
     public void help(){
-        System.out.println("SYNOPSIS: bcmf [-sum|[DD/MM/YYYY]] [-help] [user_id]");
+       String helptext = "bcmf [ -a | -s | -b | -h | user_id | date_dmy ]";
+       System.out.println(helptext);
     }
     
     public void summary(){ 
         DateTime today = new DateTime();
-        DateTime tomorrow = today.plusDays(1);
         DateTimeFormatter fmt = DateTimeFormat.forPattern("dd/MM/yyyy");
         String todayString = fmt.print(today);
-        String tomorrowString = fmt.print(tomorrow);
-        /* Iterate mData and find output inserted into 3 arrays */
-        ArrayList<BcmFEntry> todayCMUD = new ArrayList<BcmFEntry>();
-        ArrayList<BcmFEntry> tomorrowMB = new ArrayList<BcmFEntry>();
-        ArrayList<BcmFEntry> todayMB = new ArrayList<BcmFEntry>();
+        summary(todayString);
+    }
+    
+    public void summary(String dateString){ 
+        // Check date format
+
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("dd/MM/yyyy");
+        DateTime date = fmt.parseDateTime(dateString);
+        DateTime dateAfter = date.plusDays(1);
+        String dateAfterString = fmt.print(dateAfter);
+
+        // Iterate mData and find output inserted into 3 arrays 
+        ArrayList<BcmFEntry> dateCMUD = new ArrayList<BcmFEntry>();
+        ArrayList<BcmFEntry> dateAfterMB = new ArrayList<BcmFEntry>();
+        ArrayList<BcmFEntry> dateMB = new ArrayList<BcmFEntry>();
         for (BcmFEntry entry : mData){
-            if ( entry.getDate().compareTo(todayString) == 0 
+            if ( entry.getDate().compareTo(dateString) == 0 
                 && (entry.getAction().compareTo("C") == 0 
                 || entry.getAction().compareTo("M") == 0
                 || entry.getAction().compareTo("U") == 0
                 || entry.getAction().compareTo("D") == 0 )){
-                todayCMUD.add(entry);
+                dateCMUD.add(entry);
             }
-            if ( entry.getDate().compareTo(tomorrowString) == 0
+            if ( entry.getDate().compareTo(dateAfterString) == 0
                 && entry.getAction().compareTo("MB") == 0 ){
-                tomorrowMB.add(entry);
+                dateAfterMB.add(entry);
             }
-            if ( entry.getToDate().compareTo(todayString) == 0
+            if ( entry.getToDate().compareTo(dateString) == 0
                 && entry.getAction().compareTo("MB") == 0 ){
-                todayMB.add(entry);
+                dateMB.add(entry);
             }
 
         }
 
-        /* Output 3 result array */
-        System.out.println("-----Today C/M/U/D Forms-----");
-        for (BcmFEntry entry : todayCMUD){
+        // Output 3 result array 
+        System.out.println("-----Date C/M/U/D Forms-----");
+        for (BcmFEntry entry : dateCMUD){
             System.out.println(entry);
         }
-        System.out.println("-----Tomorrow Start MB Forms-----");
-        for (BcmFEntry entry : tomorrowMB){ 
+        System.out.println("-----AfterDate Start MB Forms-----");
+        for (BcmFEntry entry : dateAfterMB){ 
             System.out.println(entry);
         }
-        System.out.println("-----Today End MB Forms-----");
-        for (BcmFEntry entry : todayMB){
+        System.out.println("-----Date End MB Forms-----");
+        for (BcmFEntry entry : dateMB){
             System.out.println(entry);
-        }
-    }
-    
-    public void summary(String date){ 
-        for (BcmFEntry entry : mData){
-            if ( entry.getDate().compareTo(date) == 0 ){
-                System.out.println(entry);
-            }
         }
     }
     

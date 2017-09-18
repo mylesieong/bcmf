@@ -8,8 +8,8 @@ DESCRIPTION
        The user application form viewer and modifier.
 
 OPTIONS
-       -s       Present the day's all forms(C/M/U/D/MB), date format is DD/MM/YYYY
-       -h       Show this file
+       -s       Summary the day's all forms(C/M/U/D/MB), date format is DD/MM/YYYY
+       -h       Show this help text
        -b       Backup the excel file to a specified location
        -a       Launch a wizard for new entry adding
        user_id  Show the users' all application sorted by UAA number

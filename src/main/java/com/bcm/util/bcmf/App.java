@@ -8,6 +8,11 @@ import java.io.FileInputStream;
 
 public class App{
 
+    private final static String EXCEL_PROPERTY = "target_excel";
+    private final static String BACKUP_PROPERTY = "backup";
+    private final static String CONFIG_FILE_NAME = "bcmf.conf";
+    private final static String PROJECT_ENV = "BCMF";
+
     public static void main( String[] args ){
 
         Properties prop = new Properties();
@@ -15,15 +20,15 @@ public class App{
 
         try {
 
-            String base = System.getenv("BCMF");
-            String conf = base + File.separator + "bcmf.conf";
+            String base = System.getenv(PROJECT_ENV);
+            String conf = base + File.separator + CONFIG_FILE_NAME;
 
             prop.load(new FileInputStream(conf)); 
-            String target = prop.getProperty("target_excel");
-            String backup = prop.getProperty("backup");
+            String target = prop.getProperty(EXCEL_PROPERTY);
+            String backup = prop.getProperty(BACKUP_PROPERTY);
 
             BcmF bcmf = new BcmF();
-            bcmf.load(target);
+            bcmf.setExcel(target);
             bcmf.setBackupPath(backup);
                         
             if (args.length == 0){
@@ -52,6 +57,12 @@ public class App{
                     bcmf.show(args[0]);                 //bcmf B999
                 }
                 
+            }else if (args.length == 2){
+
+                if (args[0].compareTo("-s") == 0){
+                    bcmf.summary(args[1]);                         //bcmf -s 22/10/2019
+                }
+
             }else{
                 System.out.println("Args format wrong.");
             }
