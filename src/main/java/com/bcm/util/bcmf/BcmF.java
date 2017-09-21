@@ -111,16 +111,16 @@ public class BcmF {
                 department = selectDepartment(s, user);
                 System.out.println("Select to department from below options: ");
                 toDepartment = selectDepartment(s, user);
-                System.out.println("From date (dd/mm/yyyy) (press enter for today): ");
+                System.out.print("From date (dd/mm/yyyy) (type T for today): ");
                 date = selectDate(s);
-                System.out.println("To date (dd/mm/yyyy) (press enter for today): ");
+                System.out.print("To date (dd/mm/yyyy) (type T for today): ");
                 toDate = selectDate(s);
 
             }else{
 
                 System.out.println("Select user department from below options: ");
                 department = selectDepartment(s, user);
-                System.out.println("Date (dd/mm/yyyy) (press enter for today): ");
+                System.out.print("Date (dd/mm/yyyy) (type T for today): ");
                 date = selectDate(s);
 
             }
@@ -217,10 +217,9 @@ public class BcmF {
     }
 
     private String selectDate(Scanner s){
-        String input = s.nextLine();
-        s.nextLine(); //for swallow eol token
+        String input = s.next();
         String result;
-        if (input.compareTo("") == 0){
+        if (input.compareTo("T") == 0){
             //use today
             DateTime today = new DateTime();
             DateTimeFormatter fmt = DateTimeFormat.forPattern("dd/MM/yyyy");
