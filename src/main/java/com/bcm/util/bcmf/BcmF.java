@@ -293,14 +293,10 @@ public class BcmF {
     }
 
     public void show(){
-        show(null, BcmF.ASCENDING);
+        show(null);
     }
     
     public void show(String userName){
-        show(userName, BcmF.ASCENDING); 
-    }
-    
-    public void show(String userName, int order){
 
         this.printHeader();
         LinkedList<BcmFEntry> result = new LinkedList<BcmFEntry>();
@@ -316,15 +312,7 @@ public class BcmF {
 
             for (BcmFEntry entry : mData){
                 if (entry.getUser().compareTo(userName)==0){
-                    int i = 0;
-                    while( i < result.size() ){
-                        if(compareDate(entry.getDate(), result.get(i).getDate()) == order){
-                            i++;
-                        }else{
-                            break;
-                        }
-                    }
-                    result.add(i, entry);
+                    result.add(entry);
                 }
             }
         }
