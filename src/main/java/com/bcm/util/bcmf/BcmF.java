@@ -107,59 +107,73 @@ public class BcmF {
             // Read detail base on category selection
             if (action.compareToIgnoreCase("MB") == 0){
 
-                System.out.println("Select from department from below options: ");
+                showDepartments(user);
+                System.out.print("Select/type \"from department\" from below options: ");
                 department = selectDepartment(s, user);
-                System.out.println("Select to department from below options: ");
+
+                showDepartments(user);
+                System.out.print("Select/type \"to department\" from below options: ");
                 toDepartment = selectDepartment(s, user);
+
                 System.out.print("From date (dd/mm/yyyy) (type T for today): ");
                 date = selectDate(s);
+
                 System.out.print("To date (dd/mm/yyyy) (type T for today): ");
                 toDate = selectDate(s);
 
             }else{
 
-                System.out.println("Select user department from below options: ");
+                showDepartments(user);
+                System.out.print("Select/type user department from below options: ");
                 department = selectDepartment(s, user);
+
                 System.out.print("Date (dd/mm/yyyy) (type T for today): ");
                 date = selectDate(s);
 
             }
 
-            // Write to excel 
-            Sheet sheet = mWorkbook.getSheetAt(0);
-            for (Row row : sheet) {
-                if ( row.getCell(3).toString().isEmpty()){
+            boolean isConfirmed = askConfirmation(s, user, action, department, toDepartment, date, toDate);
 
-                    Cell cell = row.getCell(3);
-                    if (cell == null)  row.createCell(3);
-                    row.getCell(3).setCellValue(user);
-
-                    cell = row.getCell(4);
-                    if (cell == null)  row.createCell(4);
-                    row.getCell(4).setCellValue(date);
-
-                    cell = row.getCell(5);
-                    if (cell == null)  row.createCell(5);
-                    row.getCell(5).setCellValue(action);
-
-                    cell = row.getCell(6);
-                    if (cell == null)  row.createCell(6);
-                    row.getCell(6).setCellValue(department);
-
-                    cell = row.getCell(7);
-                    if (cell == null)  row.createCell(7);
-                    row.getCell(7).setCellValue(toDate);
-
-                    cell = row.getCell(9);
-                    if (cell == null)  row.createCell(9);
-                    row.getCell(9).setCellValue(toDepartment);
-
-                    break;
-
+            if (!isConfirmed){
+                System.out.println("Add action cancelled.");
+            }else{
+                // Write to excel 
+                Sheet sheet = mWorkbook.getSheetAt(0);
+                for (Row row : sheet) {
+                    if ( row.getCell(3).toString().isEmpty()){
+    
+                        Cell cell = row.getCell(3);
+                        if (cell == null)  row.createCell(3);
+                        row.getCell(3).setCellValue(user);
+    
+                        cell = row.getCell(4);
+                        if (cell == null)  row.createCell(4);
+                        row.getCell(4).setCellValue(date);
+    
+                        cell = row.getCell(5);
+                        if (cell == null)  row.createCell(5);
+                        row.getCell(5).setCellValue(action);
+    
+                        cell = row.getCell(6);
+                        if (cell == null)  row.createCell(6);
+                        row.getCell(6).setCellValue(department);
+    
+                        cell = row.getCell(7);
+                        if (cell == null)  row.createCell(7);
+                        row.getCell(7).setCellValue(toDate);
+    
+                        cell = row.getCell(9);
+                        if (cell == null)  row.createCell(9);
+                        row.getCell(9).setCellValue(toDepartment);
+    
+                        break;
+    
+                    }
                 }
+                XSSFFormulaEvaluator.evaluateAllFormulaCells(this.mWorkbook);
+                this.mWorkbook.write(os); 
+                System.out.println("Add action performed.");
             }
-            XSSFFormulaEvaluator.evaluateAllFormulaCells(this.mWorkbook);
-            this.mWorkbook.write(os); 
         
         }catch(Exception e){
 
@@ -176,7 +190,25 @@ public class BcmF {
 
     }
 
-    private String selectDepartment(Scanner s, String user){
+    private boolean askConfirmation(Scanner s, String user, String action, 
+            String department, String toDepartment, String date, String toDate){
+        System.out.println("User:\t\t" + user);
+        System.out.println("Actions:\t" + action);
+        if (action.compareToIgnoreCase("MB") == 0){
+            System.out.println("Department:\t" + department);
+            System.out.println("To Department:\t" + toDepartment);
+            System.out.println("Date:\t\t" + date);
+            System.out.println("To Date:\t\t" + toDate);
+        }else{
+            System.out.println("Department:\t" + department);
+            System.out.println("Date:\t\t" + date);
+        }
+        System.out.print("Confirm (Y/N) ? : ");
+        String input = s.next();
+        return input.compareToIgnoreCase("Y") == 0;
+    }
+
+    private List<String> getDepartments(String user){
         // Collect possibilities from mData
         Set<String> p = new HashSet<String>();
         for (BcmFEntry e: mData){
@@ -194,24 +226,37 @@ public class BcmF {
             }
         }
 
-        System.out.println("0: <User Input>");
+        return lp;
+    }
+
+    private void showDepartments(String user){
+
+        List<String> lp = getDepartments(user);
+
+        System.out.println("*** user used department ***");
         for (int i = 0; i < lp.size(); i++){
             String id = Integer.toString(i + 1);
             System.out.println(id + ": " + lp.get(i));
         }
 
-        // Read user's input
-        while (true) {
-            int i = s.nextInt();
-            if ( i > lp.size() || i < 0 ){
-                System.out.println("Not valid options. Input again: ");
-            }else if(i == 0){
-                s.nextLine();
-                String result = s.nextLine();
-                return result;
-            }else{
-                return lp.get(i-1);
-           }
+    }
+
+    private String selectDepartment(Scanner s, String user){
+
+        List<String> list = getDepartments(user);
+
+        // Read and parse user's input
+        String input = s.next();
+        int inputInt = -1;
+        try{
+           inputInt = Integer.parseInt(input);
+        }catch (Exception e){}
+
+        // if number, return member of list, else return the typing
+        if (inputInt != -1){
+            return list.get(inputInt - 1);
+        }else{
+            return input;
         }
         
     }
