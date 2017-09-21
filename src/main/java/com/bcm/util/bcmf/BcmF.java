@@ -111,12 +111,12 @@ public class BcmF {
                 System.out.print("Select/type \"from department\" from below options: ");
                 department = selectDepartment(s, user);
 
+                System.out.print("From date (dd/mm/yyyy) (type T for today): ");
+                date = selectDate(s);
+
                 showDepartments(user);
                 System.out.print("Select/type \"to department\" from below options: ");
                 toDepartment = selectDepartment(s, user);
-
-                System.out.print("From date (dd/mm/yyyy) (type T for today): ");
-                date = selectDate(s);
 
                 System.out.print("To date (dd/mm/yyyy) (type T for today): ");
                 toDate = selectDate(s);
@@ -196,9 +196,9 @@ public class BcmF {
         System.out.println("Actions:\t" + action);
         if (action.compareToIgnoreCase("MB") == 0){
             System.out.println("Department:\t" + department);
-            System.out.println("To Department:\t" + toDepartment);
             System.out.println("Date:\t\t" + date);
-            System.out.println("To Date:\t\t" + toDate);
+            System.out.println("To Department:\t" + toDepartment);
+            System.out.println("To Date:\t" + toDate);
         }else{
             System.out.println("Department:\t" + department);
             System.out.println("Date:\t\t" + date);
