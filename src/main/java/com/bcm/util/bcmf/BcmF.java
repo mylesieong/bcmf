@@ -43,20 +43,18 @@ public class BcmF {
             this.mWorkbook = WorkbookFactory.create(is);
             Sheet sheet = mWorkbook.getSheetAt(0);
             for (Row row : sheet) {
-                if ( row.getCell(3).toString().isEmpty()){
-                    break;
-                }else{
-                    if ( row.getCell(3).toString().compareTo("User ID") != 0 ){
-                        BcmFEntry entry = new BcmFEntry();
-                        entry.setUaa(row.getCell(1).toString() + "-" + row.getCell(2).toString());
-                        entry.setUser(row.getCell(3).toString());
-                        entry.setDate(row.getCell(4).toString());
-                        entry.setAction(row.getCell(5).toString());
-                        entry.setDepartment(row.getCell(6).toString());
-                        entry.setToDate(row.getCell(7) == null?"":row.getCell(7).toString());
-                        entry.setToDepartment(row.getCell(9) == null?"":row.getCell(9).toString());
-                        this.mData.add(entry);
-                    }
+                if ( row.getCell(3) == null) break;
+                if ( row.getCell(3).toString().isEmpty()) break;
+                if ( row.getCell(3).toString().compareTo("User ID") != 0 ){
+                    BcmFEntry entry = new BcmFEntry();
+                    entry.setUaa(row.getCell(1).toString() + "-" + row.getCell(2).toString());
+                    entry.setUser(row.getCell(3).toString());
+                    entry.setDate(row.getCell(4).toString());
+                    entry.setAction(row.getCell(5).toString());
+                    entry.setDepartment(row.getCell(6).toString());
+                    entry.setToDate(row.getCell(7) == null?"":row.getCell(7).toString());
+                    entry.setToDepartment(row.getCell(9) == null?"":row.getCell(9).toString());
+                    this.mData.add(entry);
                 }
             }
 
@@ -135,12 +133,19 @@ public class BcmF {
             boolean isConfirmed = askConfirmation(s, user, action, department, toDepartment, date, toDate);
 
             if (!isConfirmed){
+
                 System.out.println("Add action cancelled.");
+
             }else{
+
                 // Write to excel 
                 Sheet sheet = mWorkbook.getSheetAt(0);
+                String uaaReceipt = "";
+
                 for (Row row : sheet) {
-                    if ( row.getCell(3).toString().isEmpty()){
+                    if ( row.getCell(3) == null || row.getCell(3).toString().isEmpty()){
+
+                        uaaReceipt = "UAA-"+ row.getCell(2).getRichStringCellValue().getString();
     
                         Cell cell = row.getCell(3);
                         if (cell == null)  row.createCell(3);
@@ -170,9 +175,11 @@ public class BcmF {
     
                     }
                 }
+
                 XSSFFormulaEvaluator.evaluateAllFormulaCells(this.mWorkbook);
                 this.mWorkbook.write(os); 
-                System.out.println("Add action performed.");
+                System.out.println("Add action performed. UAA Receipt: " + uaaReceipt);
+
             }
         
         }catch(Exception e){
