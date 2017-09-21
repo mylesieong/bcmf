@@ -246,7 +246,8 @@ public class BcmF {
         List<String> list = getDepartments(user);
 
         // Read and parse user's input
-        String input = s.next();
+        s.nextLine(); //don's ask me why
+        String input = s.nextLine();
         int inputInt = -1;
         try{
            inputInt = Integer.parseInt(input);
