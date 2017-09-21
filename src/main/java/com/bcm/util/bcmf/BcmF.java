@@ -111,17 +111,17 @@ public class BcmF {
                 department = selectDepartment(s, user);
                 System.out.println("Select to department from below options: ");
                 toDepartment = selectDepartment(s, user);
-                System.out.print("From date (dd/mm/yyyy): ");
-                date = s.next();
-                System.out.print("To date (dd/mm/yyyy): ");
-                toDate = s.next();
+                System.out.println("From date (dd/mm/yyyy) (press enter for today): ");
+                date = selectDate(s);
+                System.out.println("To date (dd/mm/yyyy) (press enter for today): ");
+                toDate = selectDate(s);
 
             }else{
 
                 System.out.println("Select user department from below options: ");
                 department = selectDepartment(s, user);
-                System.out.print("Date (dd/mm/yyyy): ");
-                date = s.next();
+                System.out.println("Date (dd/mm/yyyy) (press enter for today): ");
+                date = selectDate(s);
 
             }
 
@@ -206,12 +206,29 @@ public class BcmF {
             if ( i > lp.size() || i < 0 ){
                 System.out.println("Not valid options. Input again: ");
             }else if(i == 0){
-                return s.next();
+                s.nextLine();
+                String result = s.nextLine();
+                return result;
             }else{
                 return lp.get(i-1);
            }
         }
         
+    }
+
+    private String selectDate(Scanner s){
+        String input = s.nextLine();
+        s.nextLine(); //for swallow eol token
+        String result;
+        if (input.compareTo("") == 0){
+            //use today
+            DateTime today = new DateTime();
+            DateTimeFormatter fmt = DateTimeFormat.forPattern("dd/MM/yyyy");
+            result = fmt.print(today);
+        }else{
+            result = input;
+        }
+        return result;
     }
 
     public void backup(){
