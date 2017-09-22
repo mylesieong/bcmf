@@ -1,3 +1,10 @@
+# BCM Form Maintenance Tool
+
+This tool helps to search, summary and add entry to the "User Application Form" Excel Sheet. 
+
+## Help text of this tool
+
+```
 NAME
        bcmf - user access form management utility for bcm
 
@@ -22,3 +29,11 @@ EXAMPLES
        Present the day's all forms(C/M/U/D/MB)
 
 **
+```
+
+## How to install
+
+1. Build the exe by running maven command: `mvn package`
+1. Create a folder and set the its path as system environment `%BCMF%`. Put the config file `bcmf.conf` into this folder.
+1. update the config file if necessary.
+1. Set the `bcmf.exe` to the system path so that it can run as a command.
